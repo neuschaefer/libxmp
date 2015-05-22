@@ -1,13 +1,16 @@
 
 CC = gcc
 CFLAGS = -O3 -Wall -I../include
-LD = gcc
+LD = $(CC)
 LDFLAGS =
-LIBS = -lxmp
+LIBS = $(shell pkg-config --libs libxmp)
 
 all: examples
 
-examples: player-simple player-showpatterns showinfo player-getbuffer player-openal player-openal-buffer
+clean:
+	rm -f fuzz-harness
+
+examples: player-simple player-showpatterns showinfo player-getbuffer player-openal player-openal-buffer fuzz-harness
 
 player-simple: player-simple.o alsa.o
 	$(LD) -o $@ $(LDFLAGS) $+ -lasound $(LIBS)

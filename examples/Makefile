@@ -8,7 +8,7 @@ LIBS = $(shell pkg-config --libs libxmp)
 all: examples
 
 clean:
-	rm -f fuzz-harness
+	rm -f fuzz-harness.o fuzz-harness
 
 examples: player-simple player-showpatterns showinfo player-getbuffer player-openal player-openal-buffer fuzz-harness
 
@@ -29,3 +29,6 @@ player-openal: player-openal.o
 
 player-openal-buffer: player-openal-buffer.o
 	$(LD) -o $@ $(LDFLAGS) $+ -lopenal $(LIBS)
+
+fuzz-harness: fuzz-harness.o
+	$(LD) -o $@ $(LDFLAGS) $+ $(LIBS)

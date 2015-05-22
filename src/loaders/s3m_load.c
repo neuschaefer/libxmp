@@ -150,10 +150,17 @@ static const uint8 fx[] =
 };
 
 
+#define ARRAY_LENGTH(a) (sizeof(a)/sizeof((a)[0]))
+
 /* Effect translation */
 static void xlat_fx(int c, struct xmp_event *e)
 {
     uint8 h = MSN (e->fxp), l = LSN (e->fxp);
+
+    /* Ugly oob read workaround */
+    if (e->fxt >= ARRAY_LENGTH(fx)) {
+	e->fxt = 0;
+    }
 
     switch (e->fxt = fx[e->fxt]) {
     case FX_S3M_BPM:

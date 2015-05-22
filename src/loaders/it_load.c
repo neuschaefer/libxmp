@@ -100,9 +100,16 @@ int itsex_decompress8 (HIO_HANDLE *, void *, int, int);
 int itsex_decompress16 (HIO_HANDLE *, void *, int, int);
 
 
+#define ARRAY_LENGTH(a) (sizeof(a)/sizeof((a)[0]))
+
 static void xlat_fx(int c, struct xmp_event *e, uint8 *last_fxp, int new_fx)
 {
     uint8 h = MSN(e->fxp), l = LSN(e->fxp);
+
+    /* A dirty workaround for an out of bounds read of fx[e->fxt] */
+    if (e->fxt >= ARRAY_LENGTH(fx)) {
+	e->fxt = 0;
+    }
 
     switch (e->fxt = fx[e->fxt]) {
     case FX_XTND:		/* Extended effect */
@@ -299,8 +306,9 @@ static void read_envelope(struct xmp_envelope *ei, struct it_envelope *env, HIO_
     ei->lps = env->lpb;
     ei->lpe = env->lpe;
 
+    #define ARRAY_LENGTH(a) (sizeof(a)/sizeof((a)[0]))
     if (ei->npt > 0 && ei->npt < XMP_MAX_ENV_POINTS) {
-    	for (j = 0; j < ei->npt; j++) {
+    	for (j = 0; j < ei->npt && j < ARRAY_LENGTH(env->node); j++) {
     		ei->data[j * 2] = env->node[j].x;
     		ei->data[j * 2 + 1] = env->node[j].y;
     	}
@@ -329,7 +337,7 @@ static int it_load(struct module_data *m, HIO_HANDLE *f, const int start)
     uint32 *pp_smp;		/* Pointers to samples */
     uint32 *pp_pat;		/* Pointers to patterns */
     uint8 last_fxp[64];
-    int dca2nna[] = { 0, 2, 3 };
+    int dca2nna[] = { 0, 2, 3, 0 };
     int new_fx, sample_mode;
 
     LOAD_INIT();
@@ -629,7 +637,7 @@ static int it_load(struct module_data *m, HIO_HANDLE *f, const int start)
 
 	    for (k = j = 0; j < 120; j++) {
 		c = i2h.keys[j * 2 + 1] - 1;
-		if (c < 0) {
+		if (c < 0 || c >= 120) {
 		    xxi->map[j].ins = 0xff;	/* No sample */
 		    xxi->map[j].xpo = 0;
 		    continue;

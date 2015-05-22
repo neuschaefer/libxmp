@@ -112,6 +112,11 @@ static int depack_unic(HIO_HANDLE *in, FILE *out)
 				fxp = 16 * c3 + c4;
 			}
 
+			/* prevent an oob read. */
+			if (note >= 37) {
+				note = 0;
+			}
+
 			tmp[j * 4] = (ins & 0xf0) | ptk_table[note][0];
 			tmp[j * 4 + 1] = ptk_table[note][1];
 			tmp[j * 4 + 2] = ((ins << 4) & 0xf0) | fxt;

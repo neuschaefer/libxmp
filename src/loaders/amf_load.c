@@ -272,8 +272,9 @@ static int amf_load(struct module_data *m, HIO_HANDLE *f, const int start)
 			 */
 			if (k < 0 || k >= mod->trk)
 				k = 0;
-			mod->xxp[i]->index[j] = trkmap[k];
-/*printf("mod->xxp[%d]->info[%d].index = %d (k = %d)\n", i, j, trkmap[k], k);*/
+
+			if (mod->trk != 0)
+				mod->xxp[i]->index[j] = trkmap[k];
 		}
 	}
 
@@ -322,8 +323,10 @@ static int amf_load(struct module_data *m, HIO_HANDLE *f, const int start)
 					event->note = t2 + 1;
 				event->vol = t3;
 			} else if (t2 == 0x7f) {	/* copy previous */
-				memcpy(event, &mod->xxt[i]->event[t1 - 1],
-					sizeof(struct xmp_event));
+				if (t1 > 0) {
+					memcpy(event, &mod->xxt[i]->event[t1 - 1],
+						sizeof(struct xmp_event));
+				}
 			} else if (t2 == 0x80) {	/* instrument */
 				event->ins = t3 + 1;
 			} else  {			/* effects */

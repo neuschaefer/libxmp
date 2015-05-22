@@ -53,7 +53,8 @@ int main(int argc, char **argv)
 			/* Play module */
 
 			row = -1;
-			while (xmp_play_frame(ctx) == 0) {
+			int i = 10;
+			while (xmp_play_frame(ctx) == 0 && i --> 0) {
 				xmp_get_frame_info(ctx, &fi);
 				if (fi.loop_count > 0)
 					break;

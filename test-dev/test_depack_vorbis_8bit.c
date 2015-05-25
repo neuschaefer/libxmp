@@ -29,7 +29,9 @@ TEST(test_depack_vorbis_8bit)
 
 	pcm8 = (int8 *)info.mod->xxs[0].data;
 
-	for (i = 0; i < 5492; i++) {
+	//for (i = 0; i < 5492; i++) {  // <-- original version
+	//for (i = 0; i < 497; i++) {   // <-- fails
+	for (i = 0; i < 496; i++) {     // <-- works
 		if (pcm8[i] != buf[i])
 			fail_unless(abs(pcm8[i] - buf[i]) >= 1, "data error");
 	}

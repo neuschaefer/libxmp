@@ -1417,6 +1417,7 @@ static int read_event_smix(struct context_data *ctx, struct xmp_event *e, int ch
 	RESET_NOTE(NOTE_RELEASE);
 
 	xc->ins = ins;
+	printf("mod->ins: %d\n", mod->ins);	// <-- the mod pointer is wild.
 	xc->ins_fade = mod->xxi[ins].rls;
 
 	if (ins >= mod->ins && ins < mod->ins + smix->ins)
